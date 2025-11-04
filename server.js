@@ -40,7 +40,39 @@ io.on("connection", (socket) => {
     console.log("❌ User disconnected:", socket.id);
   });
 });
+// === SIMPLE USER MODEL ===
+const userSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+});
+const User = mongoose.model("User", userSchema);
 
+// === SIGNUP ROUTE ===
+app.post("/signup", async (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password)
+    return res.status(400).json({ message: "Missing fields" });
+
+  const existingUser = await User.findOne({ username });
+  if (existingUser)
+    return res.status(400).json({ message: "Username already taken" });
+
+  await User.create({ username, password });
+  res.json({ message: "Signup successful" });
+});
+
+// === LOGIN ROUTE ===
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ username });
+  if (!user) return res.status(400).json({ message: "User not found" });
+  if (user.password !== password)
+    return res.status(400).json({ message: "Wrong password" });
+
+  res.json({ message: "Login successful" });
+});
 // === START SERVER ===
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
