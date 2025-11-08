@@ -4,10 +4,12 @@ import { Server } from "socket.io";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import findUsersRoute from "./findUsers.js";
 
 dotenv.config();
 
 const app = express();
+app.use(findUsersRoute);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
