@@ -46,8 +46,7 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
 });
-const User = mongoose.model("User", userSchema);
-
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 // SIGNUP / LOGIN ROUTES (unchanged)
 // ...
 
