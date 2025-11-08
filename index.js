@@ -1,7 +1,9 @@
 import express from "express";
 import mongoose from "mongoose";
+import findUsersRoute from "./findUsers.js";
 
 const app = express();
+app.use(findUsersRoute);
 app.use(express.json());
 
 // connect to MongoDB
