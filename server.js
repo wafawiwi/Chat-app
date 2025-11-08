@@ -9,7 +9,6 @@ import findUsersRoute from "./findUsers.js";
 dotenv.config();
 
 const app = express();
-app.use(findUsersRoute);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -19,7 +18,7 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
-
+app.use(findUsersRoute);
 // === CONNECT TO MONGODB ===
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("✅ Connected to MongoDB"))
