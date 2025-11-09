@@ -40,14 +40,14 @@
 const resultsEl = document.getElementById("results");
 const searchInput = document.getElementById("searchInput");
 
-// Hardcoded current user (replace with login session later)
+// Hardcoded current user
 const currentUser = "wafa"; 
 
-let addedFriends = []; // store already added friends
+let addedFriends = []; // store friends you already sent request to
 
 function goBack() { window.location.href = "index.html"; }
 
-// Load already added friends when page loads
+// Load already added friends
 async function loadAddedFriends() {
   try {
     const res = await fetch(`/api/friends/list?user=${currentUser}`);
@@ -57,7 +57,7 @@ async function loadAddedFriends() {
   }
 }
 
-// Search
+// Search with 300ms debounce
 let typingTimer;
 searchInput.addEventListener("input", () => {
   clearTimeout(typingTimer);
@@ -83,18 +83,25 @@ async function searchFriends() {
     }
 
     users.forEach(u => {
-      if (addedFriends.includes(u.username) || u.username === currentUser) return; // skip already added or self
+      if (u.username === currentUser) return; // skip self
 
       const card = document.createElement("div");
       card.className = "friend-card";
       const avatarSeed = encodeURIComponent(u.username);
+
+      // check if already sent request
+      const isAdded = addedFriends.includes(u.username);
+      const btnText = isAdded ? "Request Sent" : "Add";
+      const btnClass = isAdded ? "add-btn request-sent" : "add-btn";
+      const btnDisabled = isAdded ? "disabled" : "";
+
       card.innerHTML = `
         <img src="https://i.pravatar.cc/100?u=${avatarSeed}" alt="${u.username}">
         <div class="friend-info">
           <div class="friend-name">${u.username}</div>
           <div style="font-size:12px; color:#a0896b;">${u.email || ""}</div>
         </div>
-        <button class="add-btn" onclick="addFriend(this,'${u.username}')">Add</button>
+        <button class="${btnClass}" ${btnDisabled} onclick="addFriend(this,'${u.username}')">${btnText}</button>
       `;
       resultsEl.appendChild(card);
     });
@@ -118,7 +125,8 @@ async function addFriend(button, friendName) {
     if (data.message) {
       button.innerText = "Request Sent";
       button.classList.add("request-sent");
-      addedFriends.push(friendName); // mark as added
+      button.disabled = true;
+      addedFriends.push(friendName);
     }
 
   } catch(err) {
