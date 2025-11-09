@@ -168,6 +168,24 @@
         return;
       }
 
+async function addFriend(name) {
+  const currentUser = "wafa"; // temporarily hardcoded
+
+  try {
+    const res = await fetch("/api/friends/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: currentUser, friend: name })
+    });
+
+    const data = await res.json();
+    alert(data.message);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to add friend");
+  }
+    }
+      
       try {
         // FULL URL relative to server
         const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`);
