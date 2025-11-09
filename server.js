@@ -57,6 +57,21 @@ const friendSchema = new mongoose.Schema({
 });
 const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
 
+// GET list of friends for a user
+// Example: /api/friends/list?user=wafa
+app.get("/api/friends/list", async (req, res) => {
+  const { user } = req.query;
+  if (!user) return res.status(400).json([]);
+  
+  try {
+    const friends = await Friend.find({ user }).select("friend -_id");
+    res.json(friends.map(f => f.friend)); // return array of usernames
+  } catch (err) {
+    console.error(err);
+    res.status(500).json([]);
+  }
+});
+
 // === SIGNUP ROUTE ===
 app.post("/signup", async (req, res) => {
   const { username, password } = req.body;
