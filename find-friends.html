@@ -20,6 +20,7 @@
   .friend-name { font-weight:bold; font-size:16px;}
   .add-btn { background:#d8c6a5; border:none; padding:8px 14px; border-radius:8px; color:white; font-weight:bold; cursor:pointer; transition:0.3s;}
   .add-btn:hover { background:#c9b38d;}
+  .request-sent { background:#a0896b; cursor:default; }
 </style>
 </head>
 <body>
@@ -39,11 +40,24 @@
 const resultsEl = document.getElementById("results");
 const searchInput = document.getElementById("searchInput");
 
-// hardcode current user for testing
+// Hardcoded current user (replace with login session later)
 const currentUser = "wafa"; 
+
+let addedFriends = []; // store already added friends
 
 function goBack() { window.location.href = "index.html"; }
 
+// Load already added friends when page loads
+async function loadAddedFriends() {
+  try {
+    const res = await fetch(`/api/friends/list?user=${currentUser}`);
+    addedFriends = await res.json();
+  } catch (err) {
+    console.error("Failed to load added friends", err);
+  }
+}
+
+// Search
 let typingTimer;
 searchInput.addEventListener("input", () => {
   clearTimeout(typingTimer);
@@ -69,6 +83,8 @@ async function searchFriends() {
     }
 
     users.forEach(u => {
+      if (addedFriends.includes(u.username) || u.username === currentUser) return; // skip already added or self
+
       const card = document.createElement("div");
       card.className = "friend-card";
       const avatarSeed = encodeURIComponent(u.username);
@@ -78,7 +94,7 @@ async function searchFriends() {
           <div class="friend-name">${u.username}</div>
           <div style="font-size:12px; color:#a0896b;">${u.email || ""}</div>
         </div>
-        <button class="add-btn" onclick="addFriend('${u.username}')">Add</button>
+        <button class="add-btn" onclick="addFriend(this,'${u.username}')">Add</button>
       `;
       resultsEl.appendChild(card);
     });
@@ -89,7 +105,8 @@ async function searchFriends() {
   }
 }
 
-async function addFriend(friendName) {
+// Add friend
+async function addFriend(button, friendName) {
   try {
     const res = await fetch("/api/friends/add", {
       method: "POST",
@@ -97,12 +114,21 @@ async function addFriend(friendName) {
       body: JSON.stringify({ user: currentUser, friend: friendName })
     });
     const data = await res.json();
-    alert(data.message);
+
+    if (data.message) {
+      button.innerText = "Request Sent";
+      button.classList.add("request-sent");
+      addedFriends.push(friendName); // mark as added
+    }
+
   } catch(err) {
     console.error(err);
     alert("Failed to add friend");
   }
 }
+
+// Initial load
+loadAddedFriends();
 </script>
 </body>
 </html>
