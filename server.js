@@ -76,6 +76,36 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "find-friends.html")); // show your search page by default
 });
 
+// === FRIENDS MODEL ===
+const friendSchema = new mongoose.Schema({
+  user: String,       // who is adding
+  friend: String      // who they added
+});
+const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
+
+// === ADD FRIEND ROUTE ===
+app.post("/api/friends/add", async (req, res) => {
+  try {
+    const { user, friend } = req.body;
+
+    if (!user || !friend) {
+      return res.status(400).json({ error: "Missing user or friend" });
+    }
+
+    // prevent duplicates
+    const exists = await Friend.findOne({ user, friend });
+    if (exists) return res.json({ message: "Already added!" });
+
+    const newFriend = new Friend({ user, friend });
+    await newFriend.save();
+
+    res.json({ message: "Friend added!" });
+  } catch (err) {
+    console.error("Error adding friend:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // === START SERVER ===
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
