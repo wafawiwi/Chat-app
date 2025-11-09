@@ -87,6 +87,7 @@ const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
 app.post("/api/friends/add", async (req, res) => {
   try {
     const { user, friend } = req.body;
+    console.log("📩 Received add friend request:", user, "→", friend);
 
     if (!user || !friend) {
       return res.status(400).json({ error: "Missing user or friend" });
