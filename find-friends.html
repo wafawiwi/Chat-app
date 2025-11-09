@@ -1,251 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Find Friends</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f8f1e7;
-      color: #4a3c2a;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
-    header {
-      background: #d8c6a5;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 15px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    header button {
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-    }
-
-    header h1 {
-      font-size: 18px;
-      flex: 1;
-      text-align: center;
-      margin: 0;
-      letter-spacing: 0.5px;
-    }
-
-    .search-container {
-      padding: 15px;
-      background: #fff8ee;
-      display: flex;
-      gap: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .search-container input {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #d8c6a5;
-      border-radius: 8px;
-      background: white;
-      color: #4a3c2a;
-      font-size: 15px;
-    }
-
-    .search-container button {
-      background: #d8c6a5;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .search-container button:hover {
-      background: #c9b38d;
-    }
-
-    .results {
-      flex: 1;
-      overflow-y: auto;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .friend-card {
-      background: #fff8ee;
-      border: 1px solid #e3d6c3;
-      border-radius: 15px;
-      padding: 10px 15px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .friend-card img {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      border: 1px solid #d8c6a5;
-    }
-
-    .friend-info {
-      flex: 1;
-    }
-
-    .friend-name {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .add-btn {
-      background: #d8c6a5;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .add-btn:hover {
-      background: #c9b38d;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Friends</title>
+<style>
+  body { font-family: Arial; margin:0; background:#f8f1e7; color:#4a3c2a; display:flex; flex-direction:column; height:100vh;}
+  header { background:#d8c6a5; color:white; display:flex; align-items:center; gap:10px; padding:10px 15px; box-shadow:0 2px 4px rgba(0,0,0,0.15); position:sticky; top:0; z-index:10;}
+  header button { background:transparent; border:none; color:white; font-size:20px; cursor:pointer;}
+  header h1 { font-size:18px; flex:1; text-align:center; margin:0; letter-spacing:0.5px;}
+  .search-container { padding:15px; background:#fff8ee; display:flex; gap:8px; box-shadow:0 2px 4px rgba(0,0,0,0.05);}
+  .search-container input { flex:1; padding:10px; border:1px solid #d8c6a5; border-radius:8px; background:white; color:#4a3c2a; font-size:15px;}
+  .search-container button { background:#d8c6a5; border:none; padding:10px 16px; border-radius:8px; color:white; font-weight:bold; cursor:pointer; transition:0.3s;}
+  .search-container button:hover { background:#c9b38d;}
+  .results { flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:12px;}
+  .friend-card { background:#fff8ee; border:1px solid #e3d6c3; border-radius:15px; padding:10px 15px; display:flex; align-items:center; gap:12px; box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+  .friend-card img { width:45px; height:45px; border-radius:50%; border:1px solid #d8c6a5;}
+  .friend-info { flex:1;}
+  .friend-name { font-weight:bold; font-size:16px;}
+  .add-btn { background:#d8c6a5; border:none; padding:8px 14px; border-radius:8px; color:white; font-weight:bold; cursor:pointer; transition:0.3s;}
+  .add-btn:hover { background:#c9b38d;}
+</style>
 </head>
 <body>
-  <header>
-    <button onclick="goBack()">⬅</button>
-    <h1>Find friends</h1>
-  </header>
+<header>
+  <button onclick="goBack()">⬅</button>
+  <h1>Find friends</h1>
+</header>
 
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search friends..." />
-    <button onclick="searchFriends()">Search</button>
-  </div>
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="Search friends..." />
+  <button onclick="searchFriends()">Search</button>
+</div>
 
-  <div class="results" id="results"></div>
+<div class="results" id="results"></div>
 
-  <script>
-    const resultsEl = document.getElementById("results");
-    const searchInput = document.getElementById("searchInput");
+<script>
+const resultsEl = document.getElementById("results");
+const searchInput = document.getElementById("searchInput");
 
-    function goBack() {
-      window.location.href = "index.html";
+// hardcode current user for testing
+const currentUser = "wafa"; 
+
+function goBack() { window.location.href = "index.html"; }
+
+let typingTimer;
+searchInput.addEventListener("input", () => {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(searchFriends, 300);
+});
+
+async function searchFriends() {
+  const query = searchInput.value.trim();
+  resultsEl.innerHTML = "";
+
+  if (!query) {
+    resultsEl.innerHTML = "<p style='text-align:center; color:#a0896b;'>Type a name to search...</p>";
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`);
+    const users = await res.json();
+
+    if (!users.length) {
+      resultsEl.innerHTML = "<p style='text-align:center; color:#a0896b;'>No friends found</p>";
+      return;
     }
 
-    let typingTimer;
-
-    searchInput.addEventListener("input", () => {
-      clearTimeout(typingTimer);
-      typingTimer = setTimeout(() => {
-        searchFriends();
-      }, 300); // wait 300ms after typing stops
+    users.forEach(u => {
+      const card = document.createElement("div");
+      card.className = "friend-card";
+      const avatarSeed = encodeURIComponent(u.username);
+      card.innerHTML = `
+        <img src="https://i.pravatar.cc/100?u=${avatarSeed}" alt="${u.username}">
+        <div class="friend-info">
+          <div class="friend-name">${u.username}</div>
+          <div style="font-size:12px; color:#a0896b;">${u.email || ""}</div>
+        </div>
+        <button class="add-btn" onclick="addFriend('${u.username}')">Add</button>
+      `;
+      resultsEl.appendChild(card);
     });
 
-    async function searchFriends() {
-      const query = searchInput.value.trim();
-      resultsEl.innerHTML = "";
+  } catch(err) {
+    console.error(err);
+    resultsEl.innerHTML = "<p style='text-align:center; color:#a0896b;'>Error searching users</p>";
+  }
+}
 
-      if (!query) {
-        resultsEl.innerHTML = "<p style='text-align:center; color:#a0896b;'>Type a name to search...</p>";
-        return;
-      }
-
-async function addFriend(name) {
-  const currentUser = "wafa"; // temporarily hardcoded
-
+async function addFriend(friendName) {
   try {
     const res = await fetch("/api/friends/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: currentUser, friend: name })
+      body: JSON.stringify({ user: currentUser, friend: friendName })
     });
-
     const data = await res.json();
     alert(data.message);
-  } catch (err) {
+  } catch(err) {
     console.error(err);
     alert("Failed to add friend");
   }
-    }
-      
-      try {
-        // FULL URL relative to server
-        const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`);
-        const users = await res.json();
-
-        if (!users.length) {
-          resultsEl.innerHTML = "<p style='text-align:center; color:#a0896b;'>No friends found</p>";
-          return;
-        }
-
-        users.forEach(u => {
-          const card = document.createElement("div");
-          card.className = "friend-card";
-          const avatarSeed = encodeURIComponent(u.username);
-          card.innerHTML = `
-            <img src="https://i.pravatar.cc/100?u=${avatarSeed}" alt="${u.username}">
-            <div class="friend-info">
-              <div class="friend-name">${u.username}</div>
-              <div style="font-size:12px; color:#a0896b;">${u.email || ""}</div>
-            </div>
-            <button class="add-btn" onclick="addFriend('${u.username}')">Add</button>
-          `;
-          resultsEl.appendChild(card);
-        });
-
-      } catch (err) {
-        console.error(err);
-        resultsEl.innerHTML = "<p style='text-align:center; color:#a0896b;'>Error searching users</p>";
-      }
-    }
-
-    // === FRIENDS MODEL ===
-const friendSchema = new mongoose.Schema({
-  user: String,       // who is adding
-  friend: String      // who they added
-});
-const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
-
-// === ADD FRIEND ROUTE ===
-app.post("/api/friends/add", async (req, res) => {
-  try {
-    const { user, friend } = req.body;
-
-    if (!user || !friend) {
-      return res.status(400).json({ error: "Missing user or friend" });
-    }
-
-    // prevent duplicates
-    const exists = await Friend.findOne({ user, friend });
-    if (exists) return res.json({ message: "Already added!" });
-
-    const newFriend = new Friend({ user, friend });
-    await newFriend.save();
-
-    res.json({ message: "Friend added!" });
-  } catch (err) {
-    console.error("Error adding friend:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-  </script>
+}
+</script>
 </body>
-  </html>
+</html>
