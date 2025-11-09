@@ -18,12 +18,15 @@ const io = new Server(server, { cors: { origin: "*" } });
 app.use(cors());
 app.use(express.json());
 
-// === STATIC FILES ===
+// === FILE PATH SETUP ===
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(express.static(__dirname)); // serve HTML, JS, CSS files
 
-// === SEARCH ROUTE ===
+// === SERVE FRONTEND FILES ===
+// This makes your find-friends.html open properly when you go to your Render URL
+app.use(express.static(__dirname));
+
+// === ROUTES ===
 app.use(findUsersRoute);
 
 // === MONGODB CONNECTION ===
@@ -46,6 +49,13 @@ const userSchema = new mongoose.Schema({
   password: String,
 });
 const User = mongoose.models.User || mongoose.model("User", userSchema);
+
+// === FRIEND MODEL ===
+const friendSchema = new mongoose.Schema({
+  user: String,   // who adds
+  friend: String  // who is added
+});
+const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
 
 // === SIGNUP ROUTE ===
 app.post("/signup", async (req, res) => {
@@ -71,40 +81,34 @@ app.post("/login", async (req, res) => {
   res.json({ message: "Login successful" });
 });
 
-// === ROOT ROUTE REDIRECT ===
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "find-friends.html")); // show your search page by default
-});
-
-// === FRIENDS MODEL ===
-const friendSchema = new mongoose.Schema({
-  user: String,       // who is adding
-  friend: String      // who they added
-});
-const Friend = mongoose.models.Friend || mongoose.model("Friend", friendSchema);
-
 // === ADD FRIEND ROUTE ===
 app.post("/api/friends/add", async (req, res) => {
   try {
     const { user, friend } = req.body;
-    console.log("📩 Received add friend request:", user, "→", friend);
+    console.log("📩 Add Friend request:", user, "→", friend);
 
     if (!user || !friend) {
       return res.status(400).json({ error: "Missing user or friend" });
     }
 
-    // prevent duplicates
-    const exists = await Friend.findOne({ user, friend });
-    if (exists) return res.json({ message: "Already added!" });
+    // avoid duplicates
+    const existing = await Friend.findOne({ user, friend });
+    if (existing) return res.json({ message: "Already added!" });
 
     const newFriend = new Friend({ user, friend });
     await newFriend.save();
+    console.log("✅ Friend saved:", newFriend);
 
     res.json({ message: "Friend added!" });
   } catch (err) {
-    console.error("Error adding friend:", err);
+    console.error("❌ Error adding friend:", err);
     res.status(500).json({ error: "Server error" });
   }
+});
+
+// === DEFAULT PAGE ===
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "find-friends.html"));
 });
 
 // === START SERVER ===
